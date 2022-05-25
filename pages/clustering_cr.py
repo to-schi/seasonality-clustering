@@ -52,12 +52,7 @@ layout = html.Div([
     html.H6('Set number of clusters:'),
     dcc.Slider(2, 12, 1, value=6, id='slider_cr'),
     html.H6('Choose a Cluster:'),
-    dcc.Dropdown(
-        id="dropdown_cr",
-        options=clusters_all,
-        value=0,
-        clearable=False,
-    ),
+    dcc.Slider(min=0, max=5, step=1, value=0, id='slider_cr_cluster'),
     dcc.RadioItems(
     options=[
     {'label': " straight lines ", 'value': 'linear'},
@@ -71,8 +66,8 @@ layout = html.Div([
 
 @callback(
     Output(component_id='graph_cr', component_property='figure'),
-    Output(component_id='dropdown_cr', component_property='options'),
-    Input(component_id='dropdown_cr', component_property='value'),
+    Output(component_id='slider_cr_cluster', component_property='options'),
+    Input(component_id='slider_cr_cluster', component_property='value'),
     Input(component_id='radio_cr_metric', component_property='value'),
     Input(component_id='radio_cr_method', component_property='value'),
     Input(component_id='slider_cr', component_property='value'),
@@ -84,7 +79,6 @@ def update_chart(cluster_number, metric, method, n_clusters, line_shape):
     # make dictionaries for quality measuring
     cluster_cat_dict = df_cluster.groupby(['cluster'])['category'].apply(lambda x: [x for x in x]).to_dict()
     cluster_len_dict = df_cluster['cluster'].value_counts().to_dict()
-    clusters_all = [cluster for cluster in range(0, n_clusters)]
 
     # Prevents error when decreasing n_clusters and previous cluster_number of graph is higher
     try: cluster_cat_dict[cluster_number]
@@ -111,4 +105,4 @@ def update_chart(cluster_number, metric, method, n_clusters, line_shape):
     fig.update_xaxes(title_text="months", dtick=[1,len(data.index)+1])
     fig.update_layout(xaxis_rangeslider_visible=False)
     fig.update_layout(title_text=plot_title, template="plotly_dark", height=600)
-    return fig, clusters_all
+    return fig, n_clusters-1

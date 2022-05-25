@@ -10,21 +10,19 @@ method_quality_norm = pd.read_csv(DATA_PATH.joinpath("method_quality_norm.csv"),
 
 layout = html.Div([
     html.H3('Measuring the quality of clustering methods'),
-    dcc.Dropdown(
-        id="dropdown_methods",
-        options=[
-            {'label': 'Not normalized "page impressions" data', 'value': 'not normalized'},
-            {'label': 'Normalized "page impressions" data', 'value': 'normalized'},
-        ],
-        value='not normalized',
-        clearable=False,        
+    dcc.RadioItems(
+    options=[
+    {'label': "Not normalized 'page impressions' data", 'value': 'not normalized'},
+    {'label': "Normalized 'page impressions' data", 'value': 'normalized'},
+    ],
+    value='not normalized', inline=False, id='radio_methods'
     ),
     dcc.Graph(id="graph_methods"),
 ])
 
 @callback(
     Output(component_id='graph_methods', component_property='figure'),
-    Input(component_id='dropdown_methods', component_property='value')
+    Input(component_id='radio_methods', component_property='value')
 )
 def update_chart(norm):
     if norm == 'normalized':
