@@ -44,8 +44,9 @@ layout = html.Div([
 ])
 
 @callback(
-    Output("graph1", "figure"), 
-    Input("dropdown", "value"))
+    Output(component_id="graph1", component_property="figure"), 
+    Input(component_id="dropdown", component_property="value"),
+    )
 def update_bar_chart(category):
     if category == "All categories (mean)":
         fig = monthly_mean_chart()

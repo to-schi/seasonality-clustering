@@ -33,9 +33,9 @@ def get_model(n_clusters, metric, norm, method):
     if method == 'TimeSeriesKMeans':
         model = TimeSeriesKMeans(n_clusters=n_clusters, metric=metric, max_iter=max_iter, n_init=2, random_state=11).fit(x)
     if method == 'KernelKMeans':
-        model = KernelKMeans(n_clusters=n_clusters, kernel="gak", max_iter=20, n_init=2).fit(x)
+        model = KernelKMeans(n_clusters=n_clusters, kernel="gak", max_iter=25, n_init=2).fit(x)
     if method == 'KShape':
-        model = KShape(n_clusters=n_clusters, max_iter=20, n_init=4).fit(x)
+        model = KShape(n_clusters=n_clusters, max_iter=25, n_init=4).fit(x)
     return model
 
 
@@ -76,36 +76,41 @@ layout = html.Div([
         value=0,
         clearable=False,
     ),
+    dcc.RadioItems(
+    options=[
+    {'label': " straight lines ", 'value': 'linear'},
+    {'label': " spaghetti ", 'value': 'spline'},
+    ],
+    value='linear', inline=True, id='radio_lines'
+    ),
     dcc.Graph(id="graph_lo"),
 ])
 
-@callback(
-    Output(component_id='dropdown_lo', component_property='options'),
-    Input(component_id='slider_lo', component_property='value')
-)
-def update_dropdown(count):
-    clusters_all = [cluster for cluster in range(0, count)]
-    return clusters_all
 
 @callback(
     Output(component_id='graph_lo', component_property='figure'),
+    Output(component_id='dropdown_lo', component_property='options'),
     Input(component_id='dropdown_lo', component_property='value'),
     Input(component_id='radio_lo_metric', component_property='value'),
     Input(component_id='radio_lo_norm', component_property='value'),
     Input(component_id='radio_lo_method', component_property='value'),
     Input(component_id='slider_lo', component_property='value'),
+    Input(component_id='radio_lines', component_property='value'),
 )
-def update_chart(cluster_number, metric, norm, method, n_clusters):
+def update_chart(cluster_number, metric, norm, method, n_clusters, line_shape):
     if norm == True:
         data = normalize_df(data_lo_wide)
         n = "normalized"
     else:
         data = data_lo_wide
         n = "not normalized"
+
     df_cluster = pd.DataFrame(list(zip(data.columns, get_model(n_clusters, metric, norm, method).labels_)), columns=['category', 'cluster'])
+    
     # make dictionaries for quality measuring
     cluster_cat_dict = df_cluster.groupby(['cluster'])['category'].apply(lambda x: [x for x in x]).to_dict()
     cluster_len_dict = df_cluster['cluster'].value_counts().to_dict()
+    clusters_all = [cluster for cluster in range(0, n_clusters)]
 
     # Prevents error when decreasing n_clusters and previous cluster_number of graph is higher
     try: cluster_cat_dict[cluster_number]
@@ -126,10 +131,10 @@ def update_chart(cluster_number, metric, norm, method, n_clusters):
     for i, col in enumerate(cols):
         fig.add_trace(
             go.Scatter(
-                x=ind, y=data[col], name=col, line={'width':1}, hoverlabel={'namelength':-1}, showlegend=True # line=dict(width=1) #namelength=-1
+                x=ind, y=data[col], name=col, line={'width':1}, hoverlabel={'namelength':-1}, showlegend=True, line_shape=line_shape
             )
         )    
     fig.update_xaxes(title_text="months", dtick=[1,len(data.index)+1])
     fig.update_layout(xaxis_rangeslider_visible=False)
     fig.update_layout(title_text=plot_title, template="plotly_dark", height=600)
-    return fig
+    return fig, clusters_all
