@@ -66,7 +66,7 @@ layout = html.Div([
 
 @callback(
     Output(component_id='graph_cr', component_property='figure'),
-    Output(component_id='slider_cr_cluster', component_property='options'),
+    Output(component_id='slider_cr_cluster', component_property='max'),
     Input(component_id='slider_cr_cluster', component_property='value'),
     Input(component_id='radio_cr_metric', component_property='value'),
     Input(component_id='radio_cr_method', component_property='value'),
