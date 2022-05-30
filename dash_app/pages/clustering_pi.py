@@ -108,8 +108,13 @@ def update_chart(cluster_number, metric, norm, method, n_clusters, line_shape):
     except: cluster_number = 0
 
     # get quality score based on the correlation between categories in the cluster
-    x_corr = data_pi_wide[cluster_cat_dict[cluster_number]].corr().abs().values
-    x_corr_mean = round(x_corr[np.triu_indices(x_corr.shape[0],1)].mean(),2)
+    # For clusters with only one item x_corr_mean is set to 0
+    if len(cluster_cat_dict[cluster_number]) > 1:
+        x_corr = data_pi_wide[cluster_cat_dict[cluster_number]].corr().abs()
+        # get the mean of the values in the upper triangle of the correlation matrix (and round to .2)
+        x_corr_mean = round(x_corr.values[np.triu_indices_from(x_corr.values,1)].mean(), 2)
+    else:
+        x_corr_mean = 0
 
     # plot all categories in one cluster
     if method == "TimeSeriesKMeans":
