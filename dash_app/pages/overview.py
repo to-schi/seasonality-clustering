@@ -31,7 +31,7 @@ def monthly_mean_chart():
     return fig
 
 layout = html.Div([
-    html.H2("Dashboard for the Analysis of Seasonality Patterns in 100 of Idealo's Product Categories"),
+    html.H2("Dashboard for the Analysis of Seasonality Patterns in 100 e-Commerce Product Categories"),
     html.H3('Page Impressions and Conversion Rate by Category'),
     html.H6('Choose a category:'),
     dcc.Dropdown(
