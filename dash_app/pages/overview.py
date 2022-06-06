@@ -32,7 +32,7 @@ def monthly_mean_chart():
 
 layout = html.Div([
     html.H2("Dashboard for the Analysis of Seasonality Patterns in 100 e-Commerce Product Categories"),
-    html.H3('Page Impressions and Conversion Rate by Category'),
+    html.H3('Page Impressions and Conversion Rate by Category (2019'),
     html.H6('Choose a category:'),
     dcc.Dropdown(
         id="dropdown",
