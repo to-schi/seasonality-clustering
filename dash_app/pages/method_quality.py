@@ -11,7 +11,7 @@ method_quality_corr = pd.read_csv(DATA_PATH.joinpath("method_quality_corr.csv"),
 method_quality_corr_norm = pd.read_csv(DATA_PATH.joinpath("method_quality_corr_norm.csv"), index_col='n_clusters', sep=";")
 
 layout = html.Div([
-    html.H3('Measuring the quality of clustering methods'),
+    html.H3('Measuring the Quality of Clustering Methods'),
     html.H6('Metric:'),
     dcc.RadioItems(
     options=[
